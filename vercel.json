@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/reports.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "rewrites": [
     { "source": "/:slug", "destination": "/reports/:slug.html" }
   ]
