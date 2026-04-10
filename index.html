@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bardo — Reportes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="logo">Bardo</h1>
+      <span class="header-subtitle">Reportes</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="toolbar">
+      <input
+        type="search"
+        id="search"
+        class="search"
+        placeholder="Buscar reporte..."
+        autocomplete="off"
+      />
+      <span id="count" class="count"></span>
+    </div>
+
+    <div id="grid" class="grid"></div>
+
+    <div id="empty" class="empty hidden">
+      <p>No se encontraron reportes.</p>
+    </div>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+    </div>
+  </main>
+
+  <!-- Modal viewer -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span id="modal-title" class="modal-title"></span>
+      <div class="modal-actions">
+        <a id="modal-open" class="btn-icon" target="_blank" rel="noopener" title="Abrir en nueva pestaña">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+        <button id="modal-close" class="btn-icon" title="Cerrar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <iframe id="modal-frame" class="modal-frame" title="Reporte"></iframe>
+  </div>
+  <div id="overlay" class="overlay hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
