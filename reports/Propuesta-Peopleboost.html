@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>unGap × Bardo — Propuesta técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:   #0d0d0d;
+    --dark:    #141414;
+    --card:    #1a1a1a;
+    --border:  #2a2a2a;
+    --mid:     #404040;
+    --muted:   #888;
+    --light:   #c8c8c8;
+    --white:   #f5f5f0;
+    --red:     #e63946;
+    --red-dim: rgba(230,57,70,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 1.4rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(13,13,13,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--red);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .header-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 6rem 3rem 5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 4rem;
+    background: linear-gradient(to bottom, transparent, var(--border));
+  }
+
+  .kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--red);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 1.8rem;
+    display: block;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    line-height: 1.08;
+    color: var(--white);
+    margin-bottom: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+
+  h1 em {
+    color: var(--red);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 2.8rem;
+    line-height: 1.7;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.8rem;
+  }
+
+  .meta-item {
+    text-align: center;
+  }
+
+  .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .meta-value {
+    font-size: 0.88rem;
+    color: var(--light);
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--red);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .section-intro {
+    font-size: 0.98rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .pipe-step {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0 1.5rem;
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .pipe-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pipe-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--red);
+    padding-top: 0.25rem;
+    letter-spacing: 0.05em;
+  }
+
+  .pipe-content h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.01em;
+  }
+
+  .pipe-content p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .pipe-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--mid);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+    margin-top: 0.6rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PRINCIPLES ── */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-top: 0.5rem;
+  }
+
+  .principle-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem 1.5rem;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .principle-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .principle-card:hover {
+    border-color: var(--mid);
+  }
+
+  .principle-icon {
+    width: 28px;
+    height: 2px;
+    background: var(--red);
+    margin-bottom: 1.2rem;
+  }
+
+  .principle-card h3 {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .principle-card p {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── STACK GRID ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .stack-item {
+    background: var(--card);
+    padding: 1.3rem 1.5rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .stack-item.visible { opacity: 1; }
+
+  .stack-item:hover { background: #1f1f1f; }
+
+  .stack-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--red);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.03em;
+  }
+
+  .stack-role {
+    font-size: 0.83rem;
+    color: var(--light);
+    margin-bottom: 0.2rem;
+  }
+
+  .stack-note {
+    font-size: 0.77rem;
+    color: var(--muted);
+  }
+
+  /* ── AIRGAP BOX ── */
+  .airgap-box {
+    background: var(--red-dim);
+    border: 1px solid rgba(230,57,70,0.3);
+    border-radius: 4px;
+    padding: 1.8rem 2rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .airgap-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--red);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--red);
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-top: 0.1rem;
+  }
+
+  .airgap-box h3 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.45rem;
+  }
+
+  .airgap-box p {
+    font-size: 0.84rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── FASES ── */
+  .fases {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .fase {
+    background: var(--card);
+    padding: 1.8rem 1.6rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .fase.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fase-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .fase-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--red);
+    line-height: 1;
+  }
+
+  .fase-weeks {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .fase h3 {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .fase ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .fase ul li {
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: flex;
+    gap: 0.6rem;
+    line-height: 1.5;
+  }
+
+  .fase ul li::before {
+    content: '–';
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  /* ── NEXT STEPS ── */
+  .steps-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1.5rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .step-row.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .step-n {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--border);
+    line-height: 1;
+    text-align: right;
+  }
+
+  .step-text {
+    font-size: 0.92rem;
+    color: var(--light);
+  }
+
+  .step-text span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .footer-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .footer-left strong {
+    color: var(--red);
+    font-weight: 500;
+  }
+
+  .footer-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    header { padding: 1.2rem 1.5rem; }
+    .hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .principles { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: 1fr; }
+    .fases { grid-template-columns: 1fr; }
+    .meta-row { gap: 1.5rem; flex-wrap: wrap; }
+    footer { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="https://bardo.bz">bardo.bz</a>
+  <span class="header-tag">People Boost × unGap — Abril 2026</span>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="kicker">Propuesta técnica</span>
+  <h1>Datos que miden<br><em>lo que importa</em></h1>
+  <p class="hero-sub">
+    Cómo construimos el flujo completo de unGap: desde que la organización sube sus datos hasta que el equipo ve los indicadores y recibe alertas en tiempo real.
+  </p>
+  <div class="meta-row">
+    <div class="meta-item">
+      <span class="meta-label">Preparado por</span>
+      <span class="meta-value">Bardo</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Para</span>
+      <span class="meta-value">People Boost</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Uso</span>
+      <span class="meta-value">Insumo ante PNUD</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Versión</span>
+      <span class="meta-value">v1.0 · Abril 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- CÓMO FUNCIONA -->
+<section id="flujo">
+  <div class="section-label">Cómo funciona</div>
+  <h2>El flujo, paso a paso</h2>
+  <p class="section-intro">
+    Cinco momentos que transforman datos crudos de nómina y RRHH en indicadores de brecha accionables.
+  </p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <span class="pipe-num">01</span>
+      <div class="pipe-content">
+        <h3>La organización sube sus datos</h3>
+        <p>A través de un formulario seguro con autenticación propia por cliente. Acepta Excel, CSV o conexión directa al sistema de RRHH. Ningún dato circula por canales abiertos.</p>
+        <span class="pipe-tag">formulario seguro · token único · HTTPS</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-num">02</span>
+      <div class="pipe-content">
+        <h3>El sistema valida y ordena automáticamente</h3>
+        <p>Un orquestador revisa que los datos estén completos, homologa columnas, detecta inconsistencias y notifica al equipo de People Boost si algo no cuadra. Todo sin intervención manual.</p>
+        <span class="pipe-tag">n8n · limpieza automática · alertas internas</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-num">03</span>
+      <div class="pipe-content">
+        <h3>Claude AI analiza y calcula las brechas</h3>
+        <p>La IA detecta patrones, calcula cada tipo de brecha por rol y área, y genera indicadores SMART alineados al marcador GEN de la ONU. También sugiere acciones correctivas concretas.</p>
+        <span class="pipe-tag">Claude AI · indicadores GEN · JSON estructurado</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-num">04</span>
+      <div class="pipe-content">
+        <h3>Los resultados aparecen en el dashboard</h3>
+        <p>Un panel en tiempo real muestra el estado de cada indicador con semáforos visuales. Cada organización ve únicamente sus propios datos en un espacio aislado.</p>
+        <span class="pipe-tag">Metabase · tiempo real · acceso por browser</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-num">05</span>
+      <div class="pipe-content">
+        <h3>Las alertas llegan solas</h3>
+        <p>Si una brecha supera el umbral definido al inicio, el sistema envía automáticamente un correo al equipo con el detalle y las acciones sugeridas. Sin necesidad de revisar el panel a diario.</p>
+        <span class="pipe-tag">alertas por email · umbrales configurables</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPIOS -->
+<section id="principios">
+  <div class="section-label">Por qué funciona así</div>
+  <h2>Tres principios que no negociamos</h2>
+  <p class="section-intro">El diseño responde a los estándares que organismos como el PNUD exigen para trabajar con datos sensibles.</p>
+
+  <div class="principles">
+    <div class="principle-card">
+      <div class="principle-icon"></div>
+      <h3>Soberanía de datos</h3>
+      <p>Todo corre en servidores controlados por la organización. Ningún dato pasa por infraestructura compartida con terceros. El PNUD puede elegir la región geográfica del servidor.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon"></div>
+      <h3>IA responsable</h3>
+      <p>El análisis se realiza en un entorno privado y auditable. Si el PNUD necesita que ningún dato salga a internet, podemos correr la IA directamente en su propio servidor.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon"></div>
+      <h3>Automatización con trazabilidad</h3>
+      <p>Cada operación queda registrada: quién subió qué datos, cuándo se procesaron, qué indicadores se calcularon. Exportable en cualquier momento para auditorías.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack">
+  <div class="section-label">Con qué lo construimos</div>
+  <h2>Herramientas, todas de código abierto</h2>
+  <p class="section-intro">Sin licencias propietarias, sin dependencias de un solo proveedor. Cada pieza puede auditarse, reemplazarse o migrar.</p>
+
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="stack-name">n8n</div>
+      <div class="stack-role">Orquestador de flujos</div>
+      <div class="stack-note">Conecta y automatiza cada paso del pipeline</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Claude AI</div>
+      <div class="stack-role">Motor de análisis</div>
+      <div class="stack-note">Calcula brechas y genera indicadores SMART</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">PostgreSQL</div>
+      <div class="stack-role">Base de datos</div>
+      <div class="stack-note">Almacena resultados con encriptación por columna</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Metabase</div>
+      <div class="stack-role">Dashboard</div>
+      <div class="stack-note">Panel accesible desde cualquier browser, sin instalar nada</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Docker</div>
+      <div class="stack-role">Contenedorización</div>
+      <div class="stack-note">El stack entero en un entorno reproducible y portable</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Nginx + SSL</div>
+      <div class="stack-role">Acceso seguro</div>
+      <div class="stack-note">HTTPS en todo, control de acceso por IP si se requiere</div>
+    </div>
+  </div>
+
+  <div class="airgap-box">
+    <span class="airgap-tag">Opción PNUD</span>
+    <div>
+      <h3>¿Datos que no salen a ningún lado?</h3>
+      <p>Si el PNUD necesita que absolutamente ningún dato salga a internet — incluyendo la API de Anthropic — podemos correr un modelo de IA de código abierto directamente en el servidor del PNUD. El análisis es idéntico, 100% on-premise. Requiere más hardware, pero ofrece el máximo nivel de aislamiento posible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FASES -->
+<section id="fases">
+  <div class="section-label">Cómo llegamos ahí</div>
+  <h2>8 semanas hasta producción</h2>
+  <p class="section-intro">Cuatro fases con entregables concretos al final de cada una.</p>
+
+  <div class="fases">
+    <div class="fase">
+      <div class="fase-header">
+        <span class="fase-num">1</span>
+        <span class="fase-weeks">Sem 1–2</span>
+      </div>
+      <h3>Infraestructura base</h3>
+      <ul>
+        <li>Servidor configurado, seguro y con backups automáticos</li>
+        <li>Stack completo instalado y corriendo</li>
+        <li>Acceso de prueba para el equipo de People Boost</li>
+      </ul>
+    </div>
+    <div class="fase">
+      <div class="fase-header">
+        <span class="fase-num">2</span>
+        <span class="fase-weeks">Sem 2–4</span>
+      </div>
+      <h3>Pipeline de datos</h3>
+      <ul>
+        <li>Formulario de ingesta configurado para unGap</li>
+        <li>Flujo de limpieza y normalización funcionando</li>
+        <li>Integración con Claude AI probada con datos reales</li>
+      </ul>
+    </div>
+    <div class="fase">
+      <div class="fase-header">
+        <span class="fase-num">3</span>
+        <span class="fase-weeks">Sem 4–6</span>
+      </div>
+      <h3>Dashboard y alertas</h3>
+      <ul>
+        <li>Panel con indicadores por tipo de brecha</li>
+        <li>Semáforos visuales y evolución en el tiempo</li>
+        <li>Alertas por email automáticas configuradas</li>
+      </ul>
+    </div>
+    <div class="fase">
+      <div class="fase-header">
+        <span class="fase-num">4</span>
+        <span class="fase-weeks">Sem 6–8</span>
+      </div>
+      <h3>Pruebas y transferencia</h3>
+      <ul>
+        <li>Pruebas de seguridad y recuperación ante fallos</li>
+        <li>Documentación completa lista para auditorías</li>
+        <li>Equipo de People Boost capacitado y autónomo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT STEPS -->
+<section id="pasos">
+  <div class="section-label">Qué sigue</div>
+  <h2>Próximos pasos</h2>
+
+  <div class="steps-grid">
+    <div class="step-row">
+      <span class="step-n">01</span>
+      <div class="step-text">
+        Validación interna de People Boost
+        <span>Revisar esta propuesta con el equipo y confirmar el alcance antes de avanzar.</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-n">02</span>
+      <div class="step-text">
+        Call técnico con Bardo (60 min)
+        <span>Sesión para responder preguntas de arquitectura o seguridad que el PNUD pueda tener.</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-n">03</span>
+      <div class="step-text">
+        Definición del cliente piloto
+        <span>Primera organización para implementar el flujo completo y validar el proceso.</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <span class="step-n">04</span>
+      <div class="step-text">
+        Propuesta económica
+        <span>Una vez confirmado el alcance, Bardo presenta costos de implementación y soporte.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <strong>bardo.bz</strong><br>
+    Preparado para People Boost · Confidencial<br>
+    No distribuir sin autorización
+  </div>
+  <div class="footer-dot"></div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.dataset.delay || 0);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll(
+    '.pipe-step, .principle-card, .stack-item, .fase, .step-row'
+  ).forEach((el, i) => {
+    el.dataset.delay = (i % 4) * 80;
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
